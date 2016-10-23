@@ -1,0 +1,6 @@
+/.vagrant/
+/node_modules
+/public/storage
+/vendor
+*.sql
+.env
