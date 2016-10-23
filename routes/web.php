@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'PhotoController@index');
+Route::get('photo', 'PhotoController@getMore');
+Route::get('photo/rand', 'PhotoController@random');
+Route::post('photo', 'PhotoController@store');
