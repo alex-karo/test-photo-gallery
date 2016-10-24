@@ -26,3 +26,5 @@
 3. MySQL
 4. Material Design Lite
 5. ES6, fetch, vanilla.js
+
+[DEMO](http://test-photo.karo-dev.ru/)
