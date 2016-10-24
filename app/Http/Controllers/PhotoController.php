@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use App\Http\Requests;
 
@@ -27,7 +28,11 @@ class PhotoController extends Controller
      */
     public function getMore(Request $request)
     {
-        return response(Photo::skip($request->offset)->take(9)->get());
+        $photos = Photo::skip($request->offset)->take(9)->get();
+        return response([
+            'success' => true,
+            'data' => $photos
+        ]);
     }
 
     /**
@@ -37,7 +42,18 @@ class PhotoController extends Controller
      */
     public function random()
     {
-        return response(Photo::inRandomOrder()->first());
+        $photo = Photo::inRandomOrder()->first();
+
+        if (count($photo) === 0) {
+            return response([
+                'success' => false,
+                'data' => 'Нет изображений'
+            ]);
+        }
+        return response([
+            'success' => true,
+            'data' => $photo
+        ]);
     }
 
     /**
@@ -48,16 +64,23 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
-        $imagesFolder = '/img/catalog';
-        $imagePath = public_path() . $imagesFolder;
-        $extension = $request->file('file')->getClientOriginalExtension();
-        $newFileName = uniqid() . '.' . $extension;
-        // TODO: Проверка на то, уникально ли наше имя
-        $request->file('file')->move($imagePath, $newFileName);
-        $newPhoto = new Photo();
-        $newPhoto->title = $request->title;
-        $newPhoto->file = "$imagesFolder/$newFileName";
-        $newPhoto->save();
-        return response($newPhoto);
+        $validator = Validator::make($request->toArray(), [
+            'title' => 'max:255',
+            'file' => 'required|max:2000|mimetypes:image/jpg,image/jpeg,image/png,image/gif,image/webp',
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'success' => false,
+                'data' =>$validator->messages()
+            ]);
+        }
+
+        $newPhoto = new Photo($request->toArray());
+
+        if (!$newPhoto->save()) {
+            return response(['success' => false]);
+        }
+        return response(['success' => true]);
     }
 }

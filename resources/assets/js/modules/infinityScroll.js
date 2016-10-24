@@ -1,4 +1,5 @@
 import Mustache from 'mustache';
+import handleErrors from './handleErrors';
 
 function createPhotoHtml(data) {
     const template = document.getElementById('new-image-item').innerHTML;
@@ -17,17 +18,21 @@ export default function () {
         photosContainer.dataset.stopLoading = "true";
 
         fetch('/photo/?offset=' + photosContainer.children.length)
+            .catch(handleErrors)
             .then(response =>  response.json())
             .then(json => {
-                if (json.length === 0) {
+                if (json.success !== true) {
+                    throw Error(JSON.stringify(json.data));
+                }
+                if (json.data.length === 0) {
                     return;
                 }
-                const htmlString = json.map(createPhotoHtml).join('');
+                const htmlString = json.data.map(createPhotoHtml).join('');
                 const html = document.createRange().createContextualFragment(htmlString);
                 photosContainer.appendChild(html);
                 photosContainer.dataset.stopLoading = "false";
             })
-            .catch(err => console.error(err.message));
+            .catch(err => showAlert("Ошибка загрузки: " + err.message));
 
     });
 }
