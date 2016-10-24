@@ -17,7 +17,7 @@ export default function () {
 
         photosContainer.dataset.stopLoading = "true";
 
-        fetch('/photo/?offset=' + photosContainer.children.length)
+        fetch('/photo?offset=' + photosContainer.children.length)
             .catch(handleErrors)
             .then(response =>  response.json())
             .then(json => {

@@ -15,7 +15,7 @@ export default function () {
 
     document.querySelector('.js-show-random-image').addEventListener('click', function (e) {
         e.preventDefault();
-        fetch('/photo/rand/')
+        fetch('/photo/rand')
             .catch(handleErrors)
             .then(response =>  response.json())
             .then(json => {

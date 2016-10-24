@@ -6,7 +6,7 @@ export default function () {
         e.preventDefault();
         const dataToServer = new FormData(this);
 
-        fetch('/photo/', {
+        fetch('/photo', {
             method: 'POST',
             body: dataToServer,
             credentials: "same-origin",
